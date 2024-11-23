@@ -15,7 +15,7 @@
 4. Setting Up Azure Credentials in **cloudshell**:
 5. Run the Azure CLI command to create the service principal:
 ```bash
-az ad sp create-for-rbac --name "mdcgithubactions" --role contributor --scopes /subscriptions/SUBSCRIPTION_ID --sdk-auth
+az ad sp create-for-rbac --name "mdcgithubactions" --role contributor --scopes /subscriptions/b4afae6b-342d-47f7-82b5-e61150f8e80c --sdk-auth
 ```
 **Note:** Replace **SUBSCRIPTION_ID** with your actual subscription ID.
 6. Copy the JSON output containing the credentials.
@@ -43,6 +43,7 @@ AZURE_CLIENT_SECRET: Copy the clientSecret from the JSON output.
 AZURE_TENANT_ID: Copy the tenantId from the JSON output.
 AZURE_SUBSCRIPTION_ID: Copy the subscriptionId from the JSON output.
 AZURE_CREDENTIALS: Paste the entire JSON output in this field.
+ARM_SUBSCRIPTION_ID: Copy the subscriptionId from the JSON output.
 ```
 10. Log in to your **AWS account**.
 11. Access AWS IAM for Access Key:
@@ -106,7 +107,6 @@ ARM_ACCESS_KEY = Paste the value
 - Pricing tier - Select the pricing tier that you want to use for your registry.
 - Security - Select the security options that you want to use for your registry.
 - Resource group - Select **mdc-rg**.
-- In your Azure portal, go to "Container Registries" > "Your Registry" > "Settings" > "Access keys", activate the following settings > "Admin user". 
 41. Click "Create".
 ---
 42. Update GitHub repository with ACR credentials
@@ -234,7 +234,7 @@ git add .
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 git commit -m "Adding workflow"
-git push origin master
+git push origin main
 ```
 9. With this, the workflow is ready to be executed. To execute the workflow, open the GitHub website and navigate to the repository you just cloned. On the repository page, click the "Actions" button. On the actions page, click the "Run workflow" button next to the workflow mdc-workflow.
 
@@ -246,13 +246,10 @@ git push origin master
 2. In the terminal, copy the app directory from the mdc-python-azure repository to the mdc-workshop-githubactions directory:
 ```bash
 cd mdc-workshop-githubactions
-cd mdc-workshop
-mkdir app
-mkdir kube-manifest
-cd ..
 git clone https://github.com/iesodias/mdc-python-azure
-cp -r mdc-python-azure/app/ mdc-workshop/app
-cp -r mdc-python-azure/kube-manifest/ mdc-workshop/kube-manifest
+cp -r mdc-python-azure/app mdc-workshop/
+cp -r mdc-python-azure/kube-manifest mdc-workshop/
+
 ```
 
 5. Open the .github/workflows/mdc-workflow.yaml file in the mdc-workshop-githubactions directory using a text editor.
@@ -504,10 +501,6 @@ git push
 http://<Public-IP-created-for-Ingress>/mdc
 http://<Public-IP-created-for-Ingress>/host
 ```
-19. Delete namespace
-```bash
-kubectl delete ns mdc-app 
-```
 ## Lab-06: Create a Instance on AWS
 
 **Estimated time to complete:** 30 minutes
@@ -534,7 +527,7 @@ terraform {
 
   backend "azurerm" {
     resource_group_name  = "mdc-rg"
-    storage_account_name = "mdcterraform" # YOUR STORAGE ACCOUNT NAME
+    storage_account_name = "mdcconfigid" # YOUR STORAGE ACCOUNT NAME
     container_name       = "tfstates"
     key                  = "terraform-aws.tfstate"
     use_oidc             = true
@@ -893,7 +886,7 @@ jobs:
         run: echo "${{ env.INSTANCE_IP }}" > artifact.txt
 
       - name: Create Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: instance-ip
           path: artifact.txt
@@ -926,7 +919,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Download Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: instance-ip
           
@@ -983,8 +976,6 @@ cd mdc-workshop-githubactions/mdc-workshop/
 rm -rf .github/workflows/*
 cd .github/workflows/
 touch 00-feature.yaml 01-feature-to-develop.yaml 02-develop-to-homol.yaml 03-homol-to-prod.yaml
-git checkout -b develop
-git checkout -b homol
 ```
 09. Copy the content for each YAML file provided in your question and paste it into the corresponding file you've created.
 10. **00-feature.yaml**
@@ -1139,7 +1130,7 @@ jobs:
 ```
 13. **03-homol-to-prod.yaml**
 ```yaml
-name: Automate Pull Request - Homol to Master
+name: Automate Pull Request - Homol to main
 
 on:
   push:
@@ -1200,7 +1191,7 @@ spec:
     spec:
       containers:
         - name: mdc-app-dev
-          image: mdcregistryifd.azurecr.io/mdc-app:latest # CHANGE FOR YOUR REGISTRY
+          image: mdcregistryid.azurecr.io/mdc-app:latest # CHANGE FOR YOUR REGISTRY
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
@@ -1296,7 +1287,7 @@ spec:
     spec:
       containers:
         - name: mdc-app-hml
-          image: mdcregistryifd.azurecr.io/mdc-app:latest # CHANGE FOR YOUR REGISTRY
+          image: mdcregistryid.azurecr.io/mdc-app:latest # CHANGE FOR YOUR REGISTRY
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
@@ -1390,7 +1381,7 @@ spec:
     spec:
       containers:
         - name: mdc-app-prd
-          image: mdcregistryifd.azurecr.io/mdc-app:latest # CHANGE FOR YOUR REGISTRY
+          image: mdcregistryid.azurecr.io/mdc-app:latest # CHANGE FOR YOUR REGISTRY
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
