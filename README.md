@@ -1468,3 +1468,10 @@ git add .
 git commit -m "Add file for testing"
 git push --set-upstream origin feature/mdc-poc
 ```
+## After the Hands-on lab 
+
+1. Delete all Azure and AWS resources created in support of this Hands-on lab.
+
+1. End of **Workshop Day**
+
+1. Continue in the **Mentoria Arquiteto Cloud & DevOps**.
