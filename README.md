@@ -15,7 +15,7 @@
 4. Setting Up Azure Credentials in **cloudshell**:
 5. Run the Azure CLI command to create the service principal:
 ```bash
-az ad sp create-for-rbac --name "mdcgithubactions" --role contributor --scopes /subscriptions/b4afae6b-342d-47f7-82b5-e61150f8e80c --sdk-auth
+az ad sp create-for-rbac --name "mdcgithubactions" --role contributor --scopes /subscriptions/YOUR_SUB_ID --sdk-auth
 ```
 **Note:** Replace **SUBSCRIPTION_ID** with your actual subscription ID.
 6. Copy the JSON output containing the credentials.
